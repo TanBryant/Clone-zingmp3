@@ -1,60 +1,33 @@
-import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Home, Login, Public, Personal } from "./containers/public";
+import {Routes, Route} from 'react-router-dom';
+import path from "./ultis/path";
+import { useEffect } from 'react';
+import * as actions from './store/action';  
+import { useDispatch } from 'react-redux';
 
 
 
 function App() {
-  const [work, setWork] = useState("");
-  const [todos, setTodos] = useState([])
-  const handleClickAdd = () => {
-    if (todos?.some((item) => item.id === work?.replace(/\s/g, ""))) {
-      toast.warn('Công việc đã được thêm trước đó')
-    } else {
-      setTodos((prev) => [
-        ...prev,
-        { id: work?.replace(/\s/g, ""), job: work },
-      ]);
-      setWork('');
-    }
-  };
-  const hanldeDeleteJob = (id) => {
-    setTodos(prev => prev.filter(item => item.id !== id))
-  }
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(actions.getHome());
+  }, []);
 
-  console.log(todos)
+
   return (
     <>
-      <div className="flex flex-col gap-8 h-screen justify-center border border-red-500 items-center">
-        <div className="flex gap-8">
-          <input
-            type="text"
-            className="outline-none border border-blue-600 px-4 py-2 w-[300px]"
-            value={work}
-            onChange={(e) => setWork(e.target.value)}
-          />
+      <div className="">
+        <Routes>
+          <Route path={path.PUBLIC} element={<Public />}>
+            <Route path={path.HOME} element={<Home />} />
+            <Route path={path.LOGIN} element={<Login />} />
+            <Route path={path.MY_MUSIC} element={<Personal />} />
 
-          <button
-            type="button"
-            className="outline-none px-4 py-2 bg-blue-500 rounded-md text-white"
-            onClick={handleClickAdd}
-          >
-            Add
-          </button>
-        </div>
-        <div>
-          <h3 className="font-bold text-xl">Content :</h3>
-          <ul>
-            {todos?.map((item) => {
-              return (
-                <li key={item.id} className="flex gap-10 items-center ">
-                  <span className="my-2 ">{item.job}</span>
-                  <span onClick={() => hanldeDeleteJob(item.id)} className="my-2 cursor-pointer p-2"> X </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+            <Route path={path.STAR} element={<Home />} />
+          </Route>
+        </Routes>
       </div>
 
       <ToastContainer
